@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore our collection of online tools for image and PDF optimization. Compress images, convert PDFs, and more!">
+    <meta name="keywords" content="image tools, PDF tools, online tools, image compressor, PDF converter">
+    <meta name="author" content="Your Name">
+    <title>Online Tools - Image and PDF Optimization</title>
+    <style>
+        /* CSS Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: #007BFF;
+            margin-bottom: 0.5rem;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            color: #555;
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 columns by default */
+            gap: 1.5rem;
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tool-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .tool-card img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+        }
+
+        .tool-card h2 {
+            font-size: 1.5rem;
+            color: #007BFF;
+            margin-bottom: 0.5rem;
+        }
+
+        .tool-card p {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 1rem;
+        }
+
+        .tool-card a {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        .tool-card a:hover {
+            background: #0056b3;
+        }
+
+        footer {
+            margin-top: 2rem;
+            text-align: center;
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .tool-grid {
+                grid-template-columns: repeat(3, 1fr); /* 3 columns for medium screens */
+            }
+        }
+
+        @media (max-width: 900px) {
+            .tool-grid {
+                grid-template-columns: repeat(2, 1fr); /* 2 columns for tablets */
+            }
+        }
+
+        @media (max-width: 600px) {
+            .tool-grid {
+                grid-template-columns: 1fr; /* 1 column for mobile */
+            }
+
+            header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Online Tools</h1>
+        <p>Explore our collection of tools for image and PDF optimization.</p>
+    </header>
+
+    <main>
+        <div class="tool-grid">
+            <!-- Image Compressor Tool -->
+          <a href="image-compressor.html" class="tool-link">
+    <div class="tool-card">
+        <img src="https://cdn-icons-png.flaticon.com/512/3144/3144456.png" alt="Image Compressor">
+        <h2>Image Compressor</h2>
+        <p>Compress and optimize your images for the web with ease.</p>
+    </div>
+</a>
+
+
+            <!-- PDF Compressor Tool -->
+            <div class="tool-card">
+                <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" alt="PDF Compressor">
+                <h2>PDF Compressor</h2>
+                <p>Reduce the size of your PDF files without losing quality.</p>
+                <a href="pdf-compressor.html">Use Tool</a>
+            </div>
+
+            <!-- Image to PDF Converter -->
+            <div class="tool-card">
+                <img src="https://cdn-icons-png.flaticon.com/512/2991/2991112.png" alt="Image to PDF">
+                <h2>Image to PDF</h2>
+                <p>Convert images to PDF files quickly and easily.</p>
+                <a href="image-to-pdf.html">Use Tool</a>
+            </div>
+
+            <!-- PDF to Image Converter -->
+            <div class="tool-card">
+                <img src="https://cdn-icons-png.flaticon.com/512/2991/2991112.png" alt="PDF to Image">
+                <h2>PDF to Image</h2>
+                <p>Convert PDF files to images in various formats.</p>
+                <a href="pdf-to-image.html">Use Tool</a>
+            </div>
+
+            <!-- Additional Tools -->
+            <div class="tool-card">
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Image Resizer">
+                <h2>Image Resizer</h2>
+                <p>Resize images to your desired dimensions.</p>
+                <a href="image-resizer.html">Use Tool</a>
+            </div>
+
+            <div class="tool-card">
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="PDF Merger">
+                <h2>PDF Merger</h2>
+                <p>Merge multiple PDF files into one.</p>
+                <a href="pdf-merger.html">Use Tool</a>
+            </div>
+
+            <div class="tool-card">
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="PDF Splitter">
+                <h2>PDF Splitter</h2>
+                <p>Split PDF files into individual pages.</p>
+                <a href="pdf-splitter.html">Use Tool</a>
+            </div>
+
+            <div class="tool-card">
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Image Converter">
+                <h2>Image Converter</h2>
+                <p>Convert images to different formats (JPG, PNG, etc.).</p>
+                <a href="image-converter.html">Use Tool</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Online Tools. All rights reserved.</p>
+    </footer>
+</body>
+</html>
