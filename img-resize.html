@@ -6,7 +6,7 @@
     <meta name="description" content="Resize your images online with our fully responsive Image Resizer Tool. Adjust image dimensions easily and download the resized image.">
     <meta name="keywords" content="image resizer, resize images, online image tools, image optimization">
     <meta name="author" content="Abdul Rafay">
-    <Image Resizer>Image Resizer Tool - Resize Images Online</Image Resizer>
+    <title>Image Resizer Tool - Resize Images Online</title>
     <style>
         /* CSS Reset */
         * {
@@ -105,6 +105,11 @@
             margin-top: 1.5rem;
         }
 
+        #preview-section {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
         #resized-image {
             max-width: 100%;
             height: auto;
@@ -185,22 +190,22 @@
 
         <section id="output-section">
             <h2>Resized Image</h2>
-            <img id="resized-image" src="" alt="Resized Image Output">
+            <div id="preview-section">
+                <img id="resized-image" src="" alt="Resized Image Output">
+            </div>
             <a id="download-link" href="#" download="resized-image.jpg">Download Resized Image</a>
         </section>
 
-        <!-- Google AdSense Ad Unit -->
-        <section id="ad-section">
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_AD_SENSE_ID" crossorigin="anonymous"></script>
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-YOUR_AD_SENSE_ID"
-                 data-ad-slot="1234567890"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6965928065021324"
+     crossorigin="anonymous"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6965928065021324"
+     data-ad-slot="1860672733"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
         </section>
     </main>
 
@@ -254,7 +259,7 @@
         // Function to Resize Image
         function resizeImage() {
             const scale = parseFloat(resizeSlider.value);
-            sliderValue.textContent = `${Math.round(scale * 50)}%`;
+            sliderValue.textContent = `${Math.round(scale * 100)}%`;
 
             canvas.width = originalImage.width * scale;
             canvas.height = originalImage.height * scale;
