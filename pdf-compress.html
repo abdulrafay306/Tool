@@ -8,7 +8,6 @@
     <meta name="author" content="Abdul Rafay">
     <title>Compress PDF Online | Free PDF Compressor Tool</title>
 
-    <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
             data-ad-client="ca-pub-YOUR_AD_SENSE_ID"></script>
 
@@ -50,24 +49,10 @@
             margin-top: 10px;
         }
         .slider { width: 100%; margin-top: 5px; }
-        .progress-bar {
-            width: 100%;
-            background-color: #ddd;
-            border-radius: 5px;
-            margin-top: 10px;
-            display: none;
-        }
-        .progress-bar div {
-            height: 10px;
-            width: 0;
-            background: #007BFF;
-            border-radius: 5px;
-        }
         footer { margin-top: 2rem; font-size: 0.9rem; color: #ccc; }
         iframe { width: 100%; height: 500px; border: none; margin-top: 20px; }
     </style>
 
-    <!-- Import Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
 </head>
 <body>
@@ -87,10 +72,6 @@
             </div>
 
             <button id="compress-btn">Compress PDF</button>
-
-            <div class="progress-bar" id="progress-bar">
-                <div></div>
-            </div>
         </section>
 
         <section id="output-section" style="display: none;">
@@ -122,8 +103,6 @@
             const outputSection = document.getElementById('output-section');
             const downloadLink = document.getElementById('download-link');
             const pdfPreview = document.getElementById('pdf-preview');
-            const progressBar = document.getElementById('progress-bar');
-            const progress = progressBar.querySelector("div");
 
             if (fileInput.files.length === 0) {
                 alert('Please select a PDF file to compress.');
@@ -136,10 +115,6 @@
                 return;
             }
 
-            progressBar.style.display = 'block';
-            progress.style.width = "0%";
-            outputSection.style.display = 'none';
-
             try {
                 const reader = new FileReader();
                 reader.onload = async function (event) {
@@ -147,62 +122,28 @@
                     const { PDFDocument } = PDFLib;
                     const pdfDoc = await PDFDocument.load(pdfData);
 
-                    // Update progress bar
-                    progress.style.width = "30%";
-
-                    // Compress images in the PDF (if any)
-                    const pages = pdfDoc.getPages();
-                    for (const page of pages) {
-                        const images = await page.getImages();
-                        for (const image of images) {
-                            const imageEmbed = await pdfDoc.embedPng(image.content); // Example for PNG images
-                            const { width, height } = imageEmbed.scale(compressionLevel);
-                            page.drawImage(imageEmbed, {
-                                x: 0,
-                                y: 0,
-                                width,
-                                height,
-                                opacity: 1,
-                            });
-                        }
+                    const images = pdfDoc.getImages();
+                    for (const image of images) {
+                        image.scale(compressionLevel);
                     }
+                    pdfDoc.setCreator('PDF Compressor');
 
-                    // Update progress bar
-                    progress.style.width = "60%";
-
-                    // Remove unused metadata
-                    pdfDoc.setTitle('');
-                    pdfDoc.setAuthor('');
-                    pdfDoc.setSubject('');
-
-                    // Save the compressed PDF
-                    const compressedPdfBytes = await pdfDoc.save();
-
-                    // Update progress bar
-                    progress.style.width = "90%";
-
+                    const compressedPdfBytes = await pdfDoc.save({ useObjectStreams: false });
                     const compressedBlob = new Blob([compressedPdfBytes], { type: 'application/pdf' });
                     const compressedUrl = URL.createObjectURL(compressedBlob);
 
-                    // Update progress bar
-                    progress.style.width = "100%";
-
-                    // Display the compressed PDF in the iframe
-                    pdfPreview.src = compressedUrl;
-                    pdfPreview.style.display = 'block';
-
                     downloadLink.href = compressedUrl;
+                    pdfPreview.src = compressedUrl;
                     outputSection.style.display = 'block';
-                    progressBar.style.display = 'none';
                 };
 
                 reader.readAsArrayBuffer(file);
             } catch (error) {
                 console.error('Error compressing PDF:', error);
                 alert('Failed to compress PDF. Please try again.');
-                progressBar.style.display = 'none';
             }
         });
     </script>
 </body>
 </html>
+
