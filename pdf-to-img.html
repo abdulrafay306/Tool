@@ -6,7 +6,7 @@
     <meta name="description" content="Convert your PDF files to images online with our fully responsive PDF to Image Converter Tool. Extract images from PDF pages easily.">
     <meta name="keywords" content="PDF to image, convert PDF to image, online PDF tools, PDF converter">
     <meta name="author" content="Abdul Rafay">
-    <pdf to image convert>PDF to Image Converter - Extract Images from PDF</pdf to image convert>
+    <title>PDF to Image Converter - Extract Images from PDF</title>
     <style>
         /* CSS Reset */
         * {
@@ -91,6 +91,19 @@
             margin-top: 1.5rem;
         }
 
+        #preview-section {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        #preview-section img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+        }
+
         #download-link {
             display: inline-block;
             margin-top: 1rem;
@@ -167,18 +180,21 @@
             <a id="download-link" href="#" download="converted-images.zip">Download Images</a>
         </section>
 
-        <!-- Google AdSense Ad Unit -->
-        <section id="ad-section">
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_AD_SENSE_ID" crossorigin="anonymous"></script>
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-YOUR_AD_SENSE_ID"
-                 data-ad-slot="1234567890"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
+        <section id="preview-section">
+            <h2>Preview</h2>
+            <div id="image-preview"></div>
+        </section>
+
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6965928065021324"
+     crossorigin="anonymous"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6965928065021324"
+     data-ad-slot="1860672733"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
         </section>
     </main>
 
@@ -193,6 +209,7 @@
             const quality = parseFloat(document.getElementById('quality').value);
             const outputSection = document.getElementById('output-section');
             const downloadLink = document.getElementById('download-link');
+            const imagePreview = document.getElementById('image-preview');
 
             if (fileInput.files.length === 0) {
                 alert('Please select a PDF file to convert.');
@@ -209,6 +226,8 @@
             const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
             const zip = new JSZip();
 
+            imagePreview.innerHTML = ''; // Clear previous preview
+
             for (let i = 1; i <= pdf.numPages; i++) {
                 const page = await pdf.getPage(i);
                 const viewport = page.getViewport({ scale: 2 });
@@ -221,6 +240,11 @@
                 const imageData = canvas.toDataURL('image/jpeg', quality);
                 const base64Data = imageData.split(',')[1];
                 zip.file(`page-${i}.jpg`, base64Data, { base64: true });
+
+                // Display image preview
+                const img = document.createElement('img');
+                img.src = imageData;
+                imagePreview.appendChild(img);
             }
 
             const zipBlob = await zip.generateAsync({ type: 'blob' });
