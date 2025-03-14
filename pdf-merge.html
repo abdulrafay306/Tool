@@ -91,6 +91,19 @@
             margin-top: 1.5rem;
         }
 
+        #preview-section {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        #pdf-preview {
+            width: 100%;
+            height: 400px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
         #download-link {
             display: inline-block;
             margin-top: 1rem;
@@ -139,6 +152,10 @@
                 padding: 0.7rem;
                 font-size: 0.9rem;
             }
+
+            #pdf-preview {
+                height: 300px;
+            }
         }
     </style>
     <!-- Google AdSense Script -->
@@ -158,21 +175,22 @@
 
         <section id="output-section">
             <h2>Merged PDF</h2>
+            <div id="preview-section">
+                <iframe id="pdf-preview" src="" style="border: none;"></iframe>
+            </div>
             <a id="download-link" href="#" download="merged.pdf">Download Merged PDF</a>
         </section>
 
-        <!-- Google AdSense Ad Unit -->
-        <section id="ad-section">
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_AD_SENSE_ID" crossorigin="anonymous"></script>
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-YOUR_AD_SENSE_ID"
-                 data-ad-slot="1234567890"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
+ <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6965928065021324"
+     crossorigin="anonymous"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6965928065021324"
+     data-ad-slot="1860672733"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
         </section>
     </main>
 
@@ -185,6 +203,7 @@
         document.getElementById('merge-btn').addEventListener('click', async function () {
             const fileInput = document.getElementById('pdf-input');
             const outputSection = document.getElementById('output-section');
+            const pdfPreview = document.getElementById('pdf-preview');
             const downloadLink = document.getElementById('download-link');
 
             if (fileInput.files.length === 0) {
@@ -209,6 +228,10 @@
                 const mergedPdfBlob = new Blob([mergedPdf], { type: 'application/pdf' });
                 const mergedPdfUrl = URL.createObjectURL(mergedPdfBlob);
 
+                // Display PDF preview
+                pdfPreview.src = mergedPdfUrl;
+
+                // Set download link
                 downloadLink.href = mergedPdfUrl;
                 outputSection.style.display = 'block';
             } catch (error) {
