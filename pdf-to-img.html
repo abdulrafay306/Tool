@@ -8,11 +8,7 @@
     <meta name="author" content="Abdul Rafay">
     <title>PDF to Image Converter - Extract Images from PDF</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
@@ -24,18 +20,7 @@
             justify-content: center;
             padding: 20px;
         }
-        header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        header h1 {
-            font-size: 2.5rem;
-            color: #007BFF;
-        }
-        header p {
-            font-size: 1.1rem;
-            color: #555;
-        }
+        header { text-align: center; margin-bottom: 2rem; }
         main {
             background: white;
             padding: 2rem;
@@ -45,66 +30,26 @@
             max-width: 500px;
             text-align: center;
         }
-        #upload-section input, #upload-section select, #upload-section button {
+        #upload-section input, select, button {
             width: 100%;
             padding: 0.8rem;
             margin: 0.5rem 0;
-            border: 2px solid #ddd;
             border-radius: 8px;
             font-size: 1rem;
         }
-        #upload-section button {
-            background: #007BFF;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            border: none;
-            transition: 0.3s;
-        }
-        #upload-section button:hover {
-            background: #0056b3;
-        }
-        #output-section {
-            display: none;
-            margin-top: 1.5rem;
-        }
-        #image-preview {
-            max-height: 300px;
-            overflow-y: auto;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 1rem;
-        }
+        #convert-btn { background: #007BFF; color: white; cursor: pointer; border: none; }
+        #convert-btn:hover { background: #0056b3; }
+        #output-section { display: none; margin-top: 1.5rem; }
         #image-preview img {
             max-width: 100px;
             border: 1px solid #ddd;
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            loading: lazy;
         }
-        #download-link {
-            display: inline-block;
-            margin-top: 1rem;
-            padding: 0.8rem 1.5rem;
-            background: #28a745;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-        #download-link:hover {
-            background: #218838;
-        }
-        footer {
-            margin-top: 2rem;
-            text-align: center;
-            color: #777;
-            font-size: 0.9rem;
-        }
+        #loading-spinner { display: none; font-size: 1.2rem; color: #007BFF; }
+        footer { margin-top: 2rem; text-align: center; font-size: 0.9rem; }
     </style>
-    <!-- Google AdSense Script -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6965928065021324" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -112,71 +57,56 @@
         <h1>PDF to Image Converter</h1>
         <p>Extract images from PDF pages easily.</p>
     </header>
-
     <main>
         <section id="upload-section">
             <input type="file" id="pdf-input" accept="application/pdf">
-            <label for="quality">Image Quality:</label>
-            <select id="quality">
-                <option value="1.0">High (100%)</option>
-                <option value="0.75">Medium (50%)</option>
-                <option value="0.5">Low (25%)</option>
+            <label for="output-format">Output Format:</label>
+            <select id="output-format">
+                <option value="image/jpeg">JPEG</option>
+                <option value="image/png">PNG</option>
+                <option value="image/webp">WebP</option>
             </select>
             <button id="convert-btn">Convert to Images</button>
         </section>
-
+        <div id="loading-spinner">Processing...</div>
         <section id="output-section">
             <h2>Converted Images</h2>
             <a id="download-link" href="#" download="converted-images.zip">Download Images</a>
         </section>
-
         <section id="preview-section">
             <h2>Preview</h2>
             <div id="image-preview"></div>
         </section>
     </main>
-
-    <!-- Google AdSense Ad at the Bottom -->
     <footer>
         <p>&copy; 2023 PDF to Image Converter. All rights reserved.</p>
         <div style="margin-top: 20px; text-align: center;">
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-format="autorelaxed"
-                 data-ad-client="ca-pub-6965928065021324"
-                 data-ad-slot="1860672733"></ins>
-            <script>
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6965928065021324" data-ad-slot="1860672733"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
     </footer>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
     <script>
         document.getElementById('convert-btn').addEventListener('click', async function () {
             const fileInput = document.getElementById('pdf-input');
-            const quality = parseFloat(document.getElementById('quality').value);
+            const format = document.getElementById('output-format').value;
             const outputSection = document.getElementById('output-section');
             const downloadLink = document.getElementById('download-link');
             const imagePreview = document.getElementById('image-preview');
+            const loadingSpinner = document.getElementById('loading-spinner');
 
             if (fileInput.files.length === 0) {
                 alert('Please select a PDF file.');
                 return;
             }
-
+            
             const file = fileInput.files[0];
-            if (file.type !== 'application/pdf') {
-                alert('Invalid file format. Please upload a PDF.');
-                return;
-            }
-
-            fileInput.value = ''; // Reset file input
+            fileInput.value = '';
+            loadingSpinner.style.display = 'block';
             const pdfData = await file.arrayBuffer();
             const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
             const zip = new JSZip();
-
             imagePreview.innerHTML = '';
 
             for (let i = 1; i <= pdf.numPages; i++) {
@@ -187,20 +117,20 @@
                 canvas.width = viewport.width;
                 canvas.height = viewport.height;
                 await page.render({ canvasContext: ctx, viewport: viewport }).promise;
-
-                const imageData = canvas.toDataURL('image/jpeg', quality);
-                zip.file(`page-${i}.jpg`, imageData.split(',')[1], { base64: true });
-
+                const imageData = canvas.toDataURL(format);
+                zip.file(`page-${i}.${format.split('/')[1]}`, imageData.split(',')[1], { base64: true });
                 const img = document.createElement('img');
                 img.src = imageData;
-                img.loading = "lazy";
+                img.alt = `Converted PDF Page ${i}`;
                 imagePreview.appendChild(img);
             }
 
             const zipBlob = await zip.generateAsync({ type: 'blob' });
             downloadLink.href = URL.createObjectURL(zipBlob);
             outputSection.style.display = 'block';
+            loadingSpinner.style.display = 'none';
         });
     </script>
 </body>
 </html>
+
