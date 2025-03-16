@@ -22,6 +22,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding-bottom: 80px; /* Extra space for ad placement */
         }
         header { text-align: center; margin-bottom: 2rem; }
         header h1 { font-size: 2.5rem; color: #007BFF; }
@@ -70,10 +71,12 @@
             border-radius: 8px;
             font-weight: bold;
         }
-
-        /* Ad space styling */
+        
         .ad-container {
-            margin-top: 20px;
+            width: 100%;
+            max-width: 728px;
+            min-height: 90px;
+            margin: 20px auto;
             text-align: center;
         }
 
@@ -84,9 +87,6 @@
             font-size: 0.9rem;
         }
     </style>
-
-    <!-- Google AdSense Script -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6965928065021324" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -103,7 +103,7 @@
 
         <section id="resize-section">
             <label for="resize-slider">Resize Image (Scale):</label>
-            <input type="range" id="resize-slider" min="0.1" max="2" step="0.1" value="1" oninput="debouncedResize()">
+            <input type="range" id="resize-slider" min="0.1" max="2" step="0.1" value="1" oninput="resizeImage()">
             <span id="slider-value">100%</span>
         </section>
 
@@ -122,14 +122,19 @@
         </section>
     </main>
 
-    <!-- Bottom AdSense Ad Space -->
+    <!-- Google AdSense Ad Space -->
     <div class="ad-container">
+        <!-- Replace with your Google AdSense ad code -->
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
         <ins class="adsbygoogle"
              style="display:block"
+             data-ad-client="ca-pub-XXXXXXXXXXXXXX"
+             data-ad-slot="XXXXXXXXXX"
              data-ad-format="auto"
-             data-ad-client="ca-pub-6965928065021324"
-             data-ad-slot="1860672733"></ins>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+             data-full-width-responsive="true"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
     </div>
 
     <footer>
@@ -148,30 +153,29 @@
             reader.onload = (event) => {
                 image = new Image();
                 image.src = event.target.result;
-                image.onload = resizeImage;
+                image.onload = () => {
+                    document.getElementById("output-section").style.display = "block";
+                    resizeImage();
+                };
             };
             reader.readAsDataURL(file);
         }
         
         function resizeImage() {
+            if (!image) return;
+
             const scale = parseFloat(document.getElementById("resize-slider").value);
             document.getElementById("slider-value").textContent = `${Math.round(scale * 100)}%`;
-            
+
             canvas.width = image.width * scale;
             canvas.height = image.height * scale;
             ctx.imageSmoothingQuality = 'high';
             ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-            
+
             const format = document.getElementById("format-select").value;
             let resizedUrl = canvas.toDataURL(format);
             document.getElementById("resized-image").src = resizedUrl;
             document.getElementById("download-link").href = resizedUrl;
-        }
-
-        let debounceTimer;
-        function debouncedResize() {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(resizeImage, 300);
         }
     </script>
 </body>
