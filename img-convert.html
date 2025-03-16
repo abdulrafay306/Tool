@@ -7,12 +7,9 @@
     <meta name="keywords" content="image converter, convert images, online image tools, image optimization">
     <meta name="author" content="Abdul Rafay">
     <title>Image Converter Tool - Convert Images Online</title>
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: Arial, sans-serif;
             background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
@@ -22,14 +19,13 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: 20px;
         }
         header {
             text-align: center;
             margin-bottom: 20px;
         }
-        header h1 {
-            color: #007BFF;
-        }
+        header h1 { color: #007BFF; }
         main {
             background: white;
             padding: 20px;
@@ -52,17 +48,14 @@
             cursor: pointer;
             border: none;
             font-weight: bold;
+            transition: 0.3s;
         }
-        button:hover {
-            background: #0056b3;
-        }
-        .output {
-            display: none;
-            margin-top: 15px;
-        }
+        button:hover { background: #0056b3; }
+        .output { display: none; margin-top: 15px; }
         #converted-image {
             max-width: 100%;
             border-radius: 10px;
+            margin-top: 10px;
         }
         #download-link {
             display: block;
@@ -72,10 +65,9 @@
             color: white;
             text-decoration: none;
             border-radius: 5px;
+            transition: 0.3s;
         }
-        #download-link:hover {
-            background: #218838;
-        }
+        #download-link:hover { background: #218838; }
         footer {
             margin-top: 20px;
             text-align: center;
@@ -88,15 +80,23 @@
             max-width: 500px;
             text-align: center;
         }
+        #loading {
+            display: none;
+            font-size: 16px;
+            color: #ff6600;
+            font-weight: bold;
+        }
     </style>
-    <!-- Google AdSense Script -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_AD_SENSE_ID" crossorigin="anonymous"></script>
+
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6965928065021324" crossorigin="anonymous"></script>
 </head>
 <body>
     <header>
         <h1>Image Converter Tool</h1>
         <p>Convert your images to JPG, PNG, or WebP easily.</p>
     </header>
+
     <main>
         <input type="file" id="image-input" accept="image/*">
         <select id="format">
@@ -105,6 +105,8 @@
             <option value="webp">WebP</option>
         </select>
         <button id="convert-btn">Convert Image</button>
+        <p id="loading">Converting... Please wait.</p>
+        
         <div class="output" id="output-section">
             <h2>Converted Image</h2>
             <img id="converted-image" src="" alt="Converted Image">
@@ -112,58 +114,75 @@
         </div>
     </main>
 
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6965928065021324"
-     crossorigin="anonymous"></script>
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-format="autorelaxed"
-     data-ad-client="ca-pub-6965928065021324"
-     data-ad-slot="1860672733"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-
     <footer>
-        <p>&copy; 2023 Image Converter Tool. All rights reserved.</p>
+        <p>&copy; 2024 Image Converter Tool. All rights reserved.</p>
     </footer>
 
+    <!-- Single AdSense Ad at the Bottom -->
+    <div id="ad-section">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-format="auto"
+             data-ad-client="ca-pub-6965928065021324"
+             data-ad-slot="1860672733"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
     <script>
-        const fileInput = document.getElementById("image-input");
-        const convertBtn = document.getElementById("convert-btn");
-        const outputSection = document.getElementById("output-section");
-        const convertedImage = document.getElementById("converted-image");
-        const downloadLink = document.getElementById("download-link");
-        
-        convertBtn.addEventListener("click", function () {
+        document.getElementById("convert-btn").addEventListener("click", async function () {
+            const fileInput = document.getElementById("image-input");
+            const outputSection = document.getElementById("output-section");
+            const convertedImage = document.getElementById("converted-image");
+            const downloadLink = document.getElementById("download-link");
+            const format = document.getElementById("format").value;
+            const loadingText = document.getElementById("loading");
+
             if (fileInput.files.length === 0) {
                 alert("Please select an image to convert.");
                 return;
             }
-            
+
             const file = fileInput.files[0];
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                const img = new Image();
-                img.src = event.target.result;
-                img.onload = function () {
-                    const canvas = document.createElement("canvas");
-                    const ctx = canvas.getContext("2d");
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    ctx.drawImage(img, 0, 0);
-                    
-                    const format = document.getElementById("format").value;
-                    let mimeType = `image/${format}`;
-                    const convertedUrl = canvas.toDataURL(mimeType, 0.95);
-                    
-                    convertedImage.src = convertedUrl;
-                    downloadLink.href = convertedUrl;
-                    downloadLink.download = `converted-image.${format}`;
-                    outputSection.style.display = "block";
+            if (!file.type.startsWith("image/")) {
+                alert("Invalid file type. Please upload an image.");
+                return;
+            }
+
+            loadingText.style.display = "block";
+
+            try {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+
+                reader.onload = async function (event) {
+                    const img = new Image();
+                    img.src = event.target.result;
+
+                    img.onload = async function () {
+                        const canvas = document.createElement("canvas");
+                        const ctx = canvas.getContext("2d");
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0);
+
+                        let mimeType = `image/${format}`;
+                        let quality = format === "jpg" || format === "webp" ? 0.9 : 1.0;
+                        let convertedUrl = canvas.toDataURL(mimeType, quality);
+
+                        convertedImage.src = convertedUrl;
+                        downloadLink.href = convertedUrl;
+                        downloadLink.download = `converted-image.${format}`;
+                        outputSection.style.display = "block";
+                    };
                 };
-            };
-            reader.readAsDataURL(file);
+            } catch (error) {
+                alert("An error occurred while converting the image. Please try again.");
+            } finally {
+                loadingText.style.display = "none";
+            }
         });
     </script>
 </body>
 </html>
+
+
