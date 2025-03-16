@@ -3,20 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Split PDF files easily online. Select pages and preview the result before downloading. Fully responsive and SEO optimized.">
-    <meta name="keywords" content="PDF Splitter, split PDF, extract PDF pages, online PDF tools">
+    <meta name="description" content="Resize your images online with our Image Resizer Tool. Adjust image dimensions easily and download the resized image in high quality.">
+    <meta name="keywords" content="image resizer, resize images, online image tools, image optimization">
     <meta name="author" content="Abdul Rafay">
-    <title>PDF Splitter - Extract Pages Online</title>
+    <meta property="og:title" content="Image Resizer Tool - Resize Images Online">
+    <meta property="og:description" content="Resize your images easily with our online tool and download high-quality results.">
+    <meta property="og:type" content="website">
+    <title>Image Resizer Tool - Resize Images Online</title>
+    
     <style>
-        /* General Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
             color: #333;
             min-height: 100vh;
@@ -25,197 +23,137 @@
             align-items: center;
             justify-content: center;
         }
-
-        header {
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        header h1 {
-            font-size: 2rem;
-            color: #007BFF;
-        }
-
+        header { text-align: center; margin-bottom: 2rem; }
+        header h1 { font-size: 2.5rem; color: #007BFF; }
+        header p { font-size: 1.1rem; color: #555; }
+        
         main {
             background: white;
             padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             width: 90%;
-            max-width: 600px;
+            max-width: 500px;
             text-align: center;
         }
-
-        input, button {
-            width: 100%;
-            padding: 0.8rem;
-            margin: 0.5rem 0;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-            transition: 0.3s ease;
-        }
-
-        button {
-            background: #007BFF;
-            color: white;
-            font-weight: bold;
+        
+        #upload-section {
+            margin-bottom: 1.5rem;
+            border: 2px dashed #007BFF;
+            padding: 1rem;
             cursor: pointer;
-            border: none;
         }
-
-        button:hover {
-            background: #0056b3;
+        #upload-section:hover {
+            background: #f1f1f1;
         }
-
-        #output-section {
-            display: none;
-            margin-top: 1.5rem;
+        #upload-input { display: none; }
+        
+        #resize-section { margin-top: 1.5rem; }
+        #resize-slider { width: 100%; }
+        #slider-value { font-weight: bold; display: block; margin-top: 0.5rem; }
+        
+        #output-section { display: none; margin-top: 1.5rem; }
+        #resized-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
-
-        iframe {
-            width: 100%;
-            height: 400px;
-            border: 2px solid #007BFF;
-            border-radius: 8px;
-            margin-top: 10px;
-        }
-
-        a#download-link {
-            display: block;
-            padding: 0.8rem;
+        
+        #download-link {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.8rem 1.5rem;
             background: #28a745;
             color: white;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 8px;
             font-weight: bold;
-            margin-top: 1rem;
         }
-
-        a#download-link:hover {
-            background: #218838;
-        }
-
+        
         footer {
             margin-top: 2rem;
             text-align: center;
             color: #777;
             font-size: 0.9rem;
         }
-
-        /* Responsive */
-        @media (max-width: 600px) {
-            main {
-                padding: 1.5rem;
-            }
-        }
     </style>
-
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_AD_SENSE_ID" crossorigin="anonymous"></script>
 </head>
-<body>
 
+<body>
     <header>
-        <h1>PDF Splitter Tool</h1>
-        <p>Extract specific pages from your PDF file.</p>
+        <h1>Image Resizer Tool</h1>
+        <p>Resize your images easily and download high-quality results.</p>
     </header>
 
     <main>
-        <section>
-            <input type="file" id="pdf-input" accept="application/pdf">
-            <input type="text" id="page-range" placeholder="Enter page numbers (e.g., 1,3-5)">
-            <button id="split-btn">Split PDF</button>
+        <section id="upload-section" onclick="document.getElementById('upload-input').click()">
+            <p>Drag & Drop or Click to Upload Image</p>
+            <input type="file" id="upload-input" accept="image/*" onchange="handleImageUpload()">
+        </section>
+
+        <section id="resize-section">
+            <label for="resize-slider">Resize Image (Scale):</label>
+            <input type="range" id="resize-slider" min="0.1" max="2" step="0.1" value="1" oninput="debouncedResize()">
+            <span id="slider-value">100%</span>
         </section>
 
         <section id="output-section">
-            <h2>Preview of Split PDF</h2>
-            <iframe id="pdf-preview"></iframe>
-            <a id="download-link" href="#" download="split.pdf">Download Split PDF</a>
-        </section>
-
-     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6965928065021324"
-     crossorigin="anonymous"></script>
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-format="autorelaxed"
-     data-ad-client="ca-pub-6965928065021324"
-     data-ad-slot="1860672733"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
+            <h3>Resized Image</h3>
+            <img id="resized-image" src="" alt="Resized Image Output" loading="lazy">
+            <br>
+            <label for="format-select">Select Format:</label>
+            <select id="format-select">
+                <option value="image/png">PNG</option>
+                <option value="image/jpeg">JPG</option>
+                <option value="image/webp">WebP</option>
+            </select>
+            <br>
+            <a id="download-link" href="#" download="resized-image.png">Download Resized Image</a>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2025 PDF Splitter. All rights reserved.</p>
+        <p>&copy; 2025 Image Resizer Tool. All rights reserved.</p>
     </footer>
 
-    <!-- PDF-Lib Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
     <script>
-        // JavaScript Functionality
-        document.getElementById('split-btn').addEventListener('click', async () => {
-            const fileInput = document.getElementById('pdf-input');
-            const pageRange = document.getElementById('page-range').value;
-            const outputSection = document.getElementById('output-section');
-            const previewFrame = document.getElementById('pdf-preview');
-            const downloadLink = document.getElementById('download-link');
-
-            if (!fileInput.files.length) {
-                alert('Please select a PDF file.');
-                return;
-            }
-
-            if (!pageRange) {
-                alert('Please enter the page range (e.g., 1,3-5).');
-                return;
-            }
-
-            const file = fileInput.files[0];
-            const fileReader = new FileReader();
-
-            fileReader.onload = async function () {
-                try {
-                    const pdfBytes = new Uint8Array(this.result);
-                    const pdfDoc = await PDFLib.PDFDocument.load(pdfBytes);
-                    const splitDoc = await PDFLib.PDFDocument.create();
-
-                    // Parse page range input (e.g., "1,3-5")
-                    const pages = pageRange.split(',').flatMap(range => {
-                        if (range.includes('-')) {
-                            const [start, end] = range.split('-').map(Number);
-                            return Array.from({ length: end - start + 1 }, (_, i) => start + i - 1);
-                        }
-                        return [Number(range) - 1]; // Convert to zero-based index
-                    });
-
-                    // Copy selected pages to the new PDF
-                    for (let pageNum of pages) {
-                        if (pageNum >= 0 && pageNum < pdfDoc.getPageCount()) {
-                            const [page] = await splitDoc.copyPages(pdfDoc, [pageNum]);
-                            splitDoc.addPage(page);
-                        }
-                    }
-
-                    // Save the split PDF
-                    const splitPdfBytes = await splitDoc.save();
-                    const splitBlob = new Blob([splitPdfBytes], { type: 'application/pdf' });
-                    const previewUrl = URL.createObjectURL(splitBlob);
-
-                    // Display preview and enable download
-                    previewFrame.src = previewUrl;
-                    downloadLink.href = previewUrl;
-                    outputSection.style.display = 'block';
-                } catch (error) {
-                    alert('An error occurred while splitting the PDF. Please try again.');
-                    console.error(error);
-                }
+        let image = null;
+        let canvas = document.createElement('canvas');
+        let ctx = canvas.getContext('2d');
+        
+        function handleImageUpload() {
+            const file = document.getElementById("upload-input").files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                image = new Image();
+                image.src = event.target.result;
+                image.onload = resizeImage;
             };
+            reader.readAsDataURL(file);
+        }
+        
+        function resizeImage() {
+            const scale = parseFloat(document.getElementById("resize-slider").value);
+            document.getElementById("slider-value").textContent = `${Math.round(scale * 100)}%`;
+            
+            canvas.width = image.width * scale;
+            canvas.height = image.height * scale;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+            
+            const format = document.getElementById("format-select").value;
+            let resizedUrl = canvas.toDataURL(format);
+            document.getElementById("resized-image").src = resizedUrl;
+            document.getElementById("download-link").href = resizedUrl;
+        }
 
-            fileReader.readAsArrayBuffer(file);
-        });
+        let debounceTimer;
+        function debouncedResize() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(resizeImage, 300);
+        }
     </script>
-
 </body>
 </html>
