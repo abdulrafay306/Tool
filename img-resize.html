@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,7 +12,6 @@
     <title>Image Resizer Tool - Resize Images Online</title>
     
     <style>
-        /* Reset and Basic Styles */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -25,11 +23,10 @@
             align-items: center;
             justify-content: center;
         }
-
         header { text-align: center; margin-bottom: 2rem; }
-        header h1 { font-size: 2.5rem; color: #007BFF; margin-bottom: 0.5rem; animation: fadeIn 1s ease-in-out; }
+        header h1 { font-size: 2.5rem; color: #007BFF; }
         header p { font-size: 1.1rem; color: #555; }
-
+        
         main {
             background: white;
             padding: 2rem;
@@ -38,34 +35,31 @@
             width: 90%;
             max-width: 500px;
             text-align: center;
-            animation: slideUp 0.8s ease-in-out;
         }
-
-        #upload-section { margin-bottom: 1.5rem; }
-        #upload-section input {
-            width: 100%;
-            padding: 0.8rem;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
+        
+        #upload-section {
+            margin-bottom: 1.5rem;
+            border: 2px dashed #007BFF;
+            padding: 1rem;
+            cursor: pointer;
         }
-        #upload-section input:focus { border-color: #007BFF; outline: none; }
-
+        #upload-section:hover {
+            background: #f1f1f1;
+        }
+        #upload-input { display: none; }
+        
         #resize-section { margin-top: 1.5rem; }
-        #resize-section label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
         #resize-slider { width: 100%; }
         #slider-value { font-weight: bold; display: block; margin-top: 0.5rem; }
-
+        
         #output-section { display: none; margin-top: 1.5rem; }
-        #preview-section { margin-top: 1.5rem; text-align: center; }
         #resized-image {
             max-width: 100%;
             height: auto;
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
-
+        
         #download-link {
             display: inline-block;
             margin-top: 1rem;
@@ -75,17 +69,12 @@
             text-decoration: none;
             border-radius: 8px;
             font-weight: bold;
-            transition: background 0.3s ease;
         }
-        #download-link:hover { background: #218838; }
 
-        /* Loading Spinner */
-        #loading-spinner {
-            display: none;
+        /* Ad space styling */
+        .ad-container {
+            margin-top: 20px;
             text-align: center;
-            font-weight: bold;
-            margin-top: 1rem;
-            color: #007BFF;
         }
 
         footer {
@@ -93,17 +82,6 @@
             text-align: center;
             color: #777;
             font-size: 0.9rem;
-        }
-
-        /* Animations */
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        
-        /* Responsive */
-        @media (max-width: 600px) {
-            header h1 { font-size: 2rem; }
-            main { padding: 1.5rem; }
-            #upload-section input { padding: 0.7rem; font-size: 0.9rem; }
         }
     </style>
 
@@ -118,29 +96,34 @@
     </header>
 
     <main>
-        <section id="upload-section">
-            <input type="file" id="image-input" accept="image/*" onchange="handleImageUpload()">
+        <section id="upload-section" onclick="document.getElementById('upload-input').click()">
+            <p>Drag & Drop or Click to Upload Image</p>
+            <input type="file" id="upload-input" accept="image/*" onchange="handleImageUpload()">
         </section>
 
         <section id="resize-section">
             <label for="resize-slider">Resize Image (Scale):</label>
-            <input type="range" id="resize-slider" min="0.1" max="2" step="0.1" value="1">
+            <input type="range" id="resize-slider" min="0.1" max="2" step="0.1" value="1" oninput="debouncedResize()">
             <span id="slider-value">100%</span>
         </section>
 
-        <div id="loading-spinner">Processing image...</div>
-
         <section id="output-section">
             <h3>Resized Image</h3>
-            <div id="preview-section">
-                <img id="resized-image" src="" alt="Resized Image Output">
-            </div>
+            <img id="resized-image" src="" alt="Resized Image Output" loading="lazy">
+            <br>
+            <label for="format-select">Select Format:</label>
+            <select id="format-select">
+                <option value="image/png">PNG</option>
+                <option value="image/jpeg">JPG</option>
+                <option value="image/webp">WebP</option>
+            </select>
+            <br>
             <a id="download-link" href="#" download="resized-image.png">Download Resized Image</a>
         </section>
     </main>
 
     <!-- Bottom AdSense Ad Space -->
-    <div style="margin-top: 20px; text-align: center;">
+    <div class="ad-container">
         <ins class="adsbygoogle"
              style="display:block"
              data-ad-format="auto"
@@ -154,44 +137,44 @@
     </footer>
 
     <script>
-        let originalImage = null;
+        let image = null;
         let canvas = document.createElement('canvas');
         let ctx = canvas.getContext('2d');
-
+        
         function handleImageUpload() {
-            const file = document.getElementById("image-input").files[0];
+            const file = document.getElementById("upload-input").files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = (event) => {
-                originalImage = new Image();
-                originalImage.src = event.target.result;
-                originalImage.onload = () => {
-                    document.getElementById("output-section").style.display = "block";
-                    resizeImage();
-                };
+                image = new Image();
+                image.src = event.target.result;
+                image.onload = resizeImage;
             };
             reader.readAsDataURL(file);
         }
-
+        
         function resizeImage() {
-            document.getElementById("loading-spinner").style.display = "block";
-            setTimeout(() => {
-                const scale = parseFloat(document.getElementById("resize-slider").value);
-                document.getElementById("slider-value").textContent = `${Math.round(scale * 100)}%`;
+            const scale = parseFloat(document.getElementById("resize-slider").value);
+            document.getElementById("slider-value").textContent = `${Math.round(scale * 100)}%`;
+            
+            canvas.width = image.width * scale;
+            canvas.height = image.height * scale;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+            
+            const format = document.getElementById("format-select").value;
+            let resizedUrl = canvas.toDataURL(format);
+            document.getElementById("resized-image").src = resizedUrl;
+            document.getElementById("download-link").href = resizedUrl;
+        }
 
-                canvas.width = originalImage.width * scale;
-                canvas.height = originalImage.height * scale;
-                ctx.drawImage(originalImage, 0, 0, canvas.width, canvas.height);
-
-                let resizedUrl = canvas.toDataURL("image/png");
-                document.getElementById("resized-image").src = resizedUrl;
-                document.getElementById("download-link").href = resizedUrl;
-
-                document.getElementById("loading-spinner").style.display = "none";
-            }, 500);
+        let debounceTimer;
+        function debouncedResize() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(resizeImage, 300);
         }
     </script>
 </body>
 </html>
+
 
