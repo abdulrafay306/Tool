@@ -21,6 +21,7 @@
             justify-content: center;
             padding: 20px;
         }
+        .dark-mode { background: #2c2c2c; color: #f5f5f5; }
         header {
             text-align: center;
             margin-bottom: 20px;
@@ -35,6 +36,16 @@
             width: 90%;
             max-width: 500px;
         }
+        .dark-mode main { background: #3c3c3c; }
+        .file-drop {
+            border: 2px dashed #007BFF;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        .file-drop:hover { background: #e3f2fd; }
         input, select, button {
             width: 100%;
             padding: 10px;
@@ -98,7 +109,10 @@
     </header>
 
     <main>
-        <input type="file" id="image-input" accept="image/*">
+        <div class="file-drop" id="drop-area">
+            <p>Drag & Drop an image here or Click to select</p>
+        </div>
+        <input type="file" id="image-input" accept="image/*" hidden>
         <select id="format">
             <option value="jpg">JPG</option>
             <option value="png">PNG</option>
@@ -129,57 +143,60 @@
     </div>
 
     <script>
-        document.getElementById("convert-btn").addEventListener("click", async function () {
-            const fileInput = document.getElementById("image-input");
-            const outputSection = document.getElementById("output-section");
-            const convertedImage = document.getElementById("converted-image");
-            const downloadLink = document.getElementById("download-link");
-            const format = document.getElementById("format").value;
-            const loadingText = document.getElementById("loading");
+        const dropArea = document.getElementById("drop-area");
+        const fileInput = document.getElementById("image-input");
+        const convertBtn = document.getElementById("convert-btn");
+        const outputSection = document.getElementById("output-section");
+        const convertedImage = document.getElementById("converted-image");
+        const downloadLink = document.getElementById("download-link");
+        const formatSelect = document.getElementById("format");
+        const loadingText = document.getElementById("loading");
 
-            if (fileInput.files.length === 0) {
-                alert("Please select an image to convert.");
+        dropArea.addEventListener("click", () => fileInput.click());
+        dropArea.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            dropArea.style.background = "#e3f2fd";
+        });
+        dropArea.addEventListener("dragleave", () => dropArea.style.background = "");
+        dropArea.addEventListener("drop", (e) => {
+            e.preventDefault();
+            fileInput.files = e.dataTransfer.files;
+        });
+
+        convertBtn.addEventListener("click", () => {
+            if (!fileInput.files.length) {
+                alert("Please select an image.");
                 return;
             }
-
+            
             const file = fileInput.files[0];
-            if (!file.type.startsWith("image/")) {
-                alert("Invalid file type. Please upload an image.");
-                return;
-            }
-
+            const reader = new FileReader();
+            
             loadingText.style.display = "block";
-
-            try {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-
-                reader.onload = async function (event) {
-                    const img = new Image();
-                    img.src = event.target.result;
-
-                    img.onload = async function () {
-                        const canvas = document.createElement("canvas");
-                        const ctx = canvas.getContext("2d");
-                        canvas.width = img.width;
-                        canvas.height = img.height;
-                        ctx.drawImage(img, 0, 0);
-
-                        let mimeType = `image/${format}`;
-                        let quality = format === "jpg" || format === "webp" ? 0.9 : 1.0;
-                        let convertedUrl = canvas.toDataURL(mimeType, quality);
-
-                        convertedImage.src = convertedUrl;
-                        downloadLink.href = convertedUrl;
-                        downloadLink.download = `converted-image.${format}`;
-                        outputSection.style.display = "block";
-                    };
+            reader.readAsDataURL(file);
+            
+            reader.onload = function (event) {
+                const img = new Image();
+                img.src = event.target.result;
+                
+                img.onload = function () {
+                    const canvas = document.createElement("canvas");
+                    const ctx = canvas.getContext("2d");
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                    
+                    let format = formatSelect.value;
+                    let quality = format === "png" ? 1.0 : 0.9;
+                    let convertedUrl = canvas.toDataURL(`image/${format}`, quality);
+                    
+                    convertedImage.src = convertedUrl;
+                    downloadLink.href = convertedUrl;
+                    downloadLink.download = `converted-image.${format}`;
+                    outputSection.style.display = "block";
+                    loadingText.style.display = "none";
                 };
-            } catch (error) {
-                alert("An error occurred while converting the image. Please try again.");
-            } finally {
-                loadingText.style.display = "none";
-            }
+            };
         });
     </script>
 </body>
