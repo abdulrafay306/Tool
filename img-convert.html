@@ -21,11 +21,7 @@
             justify-content: center;
             padding: 20px;
         }
-        .dark-mode { background: #2c2c2c; color: #f5f5f5; }
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+        header { text-align: center; margin-bottom: 20px; }
         header h1 { color: #007BFF; }
         main {
             background: white;
@@ -36,7 +32,6 @@
             width: 90%;
             max-width: 500px;
         }
-        .dark-mode main { background: #3c3c3c; }
         .file-drop {
             border: 2px dashed #007BFF;
             padding: 30px;
@@ -63,39 +58,44 @@
         }
         button:hover { background: #0056b3; }
         .output { display: none; margin-top: 15px; }
-        #converted-image {
-            max-width: 100%;
-            border-radius: 10px;
+        #image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
             margin-top: 10px;
         }
-        #download-link {
-            display: block;
-            margin-top: 10px;
-            padding: 10px;
-            background: #28a745;
-            color: white;
-            text-decoration: none;
+        .preview-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
             border-radius: 5px;
-            transition: 0.3s;
+            border: 1px solid #ddd;
         }
-        #download-link:hover { background: #218838; }
-        footer {
-            margin-top: 20px;
-            text-align: center;
-            color: #777;
-            font-size: 0.9rem;
+        #converted-images {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
         }
-        #ad-section {
-            margin-top: 20px;
+        .converted-img-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .converted-img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        footer { margin-top: 20px; text-align: center; color: #777; font-size: 0.9rem; }
+        #ad-section { margin-top: 20px; width: 100%; max-width: 500px; text-align: center; }
+        #quality-slider {
             width: 100%;
-            max-width: 500px;
-            text-align: center;
-        }
-        #loading {
-            display: none;
-            font-size: 16px;
-            color: #ff6600;
-            font-weight: bold;
+            margin: 10px 0;
         }
     </style>
 
@@ -110,21 +110,23 @@
 
     <main>
         <div class="file-drop" id="drop-area">
-            <p>Drag & Drop an image here or Click to select</p>
+            <p>Drag & Drop images here or Click to select</p>
         </div>
-        <input type="file" id="image-input" accept="image/*" hidden>
+        <input type="file" id="image-input" accept="image/*" multiple hidden>
         <select id="format">
             <option value="jpg">JPG</option>
             <option value="png">PNG</option>
             <option value="webp">WebP</option>
         </select>
-        <button id="convert-btn">Convert Image</button>
-        <p id="loading">Converting... Please wait.</p>
-        
+        <label>Quality: <span id="quality-value">90%</span></label>
+        <input type="range" id="quality-slider" min="10" max="100" value="90">
+        <button id="convert-btn">Convert Images</button>
+
+        <div id="image-preview"></div>
+
         <div class="output" id="output-section">
-            <h2>Converted Image</h2>
-            <img id="converted-image" src="" alt="Converted Image">
-            <a id="download-link" href="#" download="converted-image">Download</a>
+            <h2>Converted Images</h2>
+            <div id="converted-images"></div>
         </div>
     </main>
 
@@ -147,60 +149,60 @@
         const fileInput = document.getElementById("image-input");
         const convertBtn = document.getElementById("convert-btn");
         const outputSection = document.getElementById("output-section");
-        const convertedImage = document.getElementById("converted-image");
-        const downloadLink = document.getElementById("download-link");
+        const convertedImagesContainer = document.getElementById("converted-images");
         const formatSelect = document.getElementById("format");
-        const loadingText = document.getElementById("loading");
+        const qualitySlider = document.getElementById("quality-slider");
+        const qualityValue = document.getElementById("quality-value");
+        const imagePreview = document.getElementById("image-preview");
 
         dropArea.addEventListener("click", () => fileInput.click());
-        dropArea.addEventListener("dragover", (e) => {
-            e.preventDefault();
-            dropArea.style.background = "#e3f2fd";
-        });
-        dropArea.addEventListener("dragleave", () => dropArea.style.background = "");
-        dropArea.addEventListener("drop", (e) => {
-            e.preventDefault();
-            fileInput.files = e.dataTransfer.files;
-        });
+        fileInput.addEventListener("change", previewImages);
+        qualitySlider.addEventListener("input", () => qualityValue.textContent = qualitySlider.value + "%");
+
+        function previewImages() {
+            imagePreview.innerHTML = "";
+            Array.from(fileInput.files).forEach(file => {
+                const img = document.createElement("img");
+                img.classList.add("preview-img");
+                img.src = URL.createObjectURL(file);
+                imagePreview.appendChild(img);
+            });
+        }
 
         convertBtn.addEventListener("click", () => {
-            if (!fileInput.files.length) {
-                alert("Please select an image.");
-                return;
-            }
-            
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-            
-            loadingText.style.display = "block";
-            reader.readAsDataURL(file);
-            
-            reader.onload = function (event) {
-                const img = new Image();
-                img.src = event.target.result;
-                
-                img.onload = function () {
-                    const canvas = document.createElement("canvas");
-                    const ctx = canvas.getContext("2d");
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    ctx.drawImage(img, 0, 0);
-                    
-                    let format = formatSelect.value;
-                    let quality = format === "png" ? 1.0 : 0.9;
-                    let convertedUrl = canvas.toDataURL(`image/${format}`, quality);
-                    
-                    convertedImage.src = convertedUrl;
-                    downloadLink.href = convertedUrl;
-                    downloadLink.download = `converted-image.${format}`;
-                    outputSection.style.display = "block";
-                    loadingText.style.display = "none";
+            convertedImagesContainer.innerHTML = "";
+            outputSection.style.display = "none";
+
+            Array.from(fileInput.files).forEach(file => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function (event) {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = function () {
+                        const canvas = document.createElement("canvas");
+                        const ctx = canvas.getContext("2d");
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0);
+
+                        let format = formatSelect.value;
+                        let quality = qualitySlider.value / 100;
+                        let convertedUrl = canvas.toDataURL(`image/${format}`, quality);
+
+                        const imgElement = document.createElement("img");
+                        imgElement.src = convertedUrl;
+                        imgElement.classList.add("converted-img");
+                        convertedImagesContainer.appendChild(imgElement);
+                        outputSection.style.display = "block";
+                    };
                 };
-            };
+            });
         });
     </script>
 </body>
 </html>
+
 
 
 
