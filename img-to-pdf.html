@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Convert your images to PDF online with our fully responsive Image to PDF Converter Tool. Combine multiple images into a single PDF file.">
+    <meta name="description" content="Convert images to PDF online. Combine multiple images into a single PDF file easily.">
     <title>Image to PDF Converter - Combine Images into PDF</title>
     
-    <!-- Single AdSense implementation -->
+    <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6965928065021324" crossorigin="anonymous"></script>
     
     <style>
-        /* CSS Reset with improved mobile support */
         * {
             margin: 0;
             padding: 0;
@@ -166,7 +165,6 @@
             display: none;
         }
 
-        /* Drag and drop styles */
         .drop-zone {
             border: 2px dashed rgba(255, 255, 255, 0.3);
             border-radius: 8px;
@@ -191,7 +189,6 @@
             color: rgba(255, 255, 255, 0.6);
         }
 
-        /* Image preview container */
         #image-previews {
             display: flex;
             flex-wrap: wrap;
@@ -209,7 +206,6 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        /* Loading spinner */
         .spinner {
             display: none;
             width: 40px;
@@ -226,13 +222,43 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Mobile optimizations */
+        .browse-btn {
+            background: #007BFF;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .browse-btn:hover {
+            background: #0056b3;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            padding: 0;
+            font-size: 12px;
+            line-height: 1;
+        }
+
         @media (max-width: 480px) {
             main {
                 padding: 1.5rem;
@@ -251,9 +277,13 @@
             #pdf-preview {
                 height: 300px;
             }
+            
+            .browse-btn {
+                padding: 0.8rem;
+                font-size: 1rem;
+            }
         }
 
-        /* Ad container */
         .ad-container {
             width: 100%;
             margin: 20px 0;
@@ -271,22 +301,21 @@
         <section id="upload-section">
             <div class="file-info" id="file-count">No files selected</div>
             
-            <!-- Drag and drop zone -->
             <div class="drop-zone" id="drop-zone">
                 <p>Drag & drop images here</p>
                 <small>or</small>
                 <input type="file" id="image-input" accept="image/*" multiple style="display: none;">
-                <button type="button" id="browse-btn" style="margin-top: 0.5rem;">Browse Files</button>
+                <button class="browse-btn" id="browse-btn">Browse Files</button>
             </div>
             
-            <!-- Image preview container -->
             <div id="image-previews"></div>
             
             <label for="quality">Image Quality:</label>
             <select id="quality">
                 <option value="1.0">High (100%)</option>
-                <option value="0.5">Medium (50%)</option>
-                <option value="0.25">Low (25%)</option>
+                <option value="0.8" selected>Good (80%)</option>
+                <option value="0.6">Medium (60%)</option>
+                <option value="0.4">Low (40%)</option>
             </select>
             
             <label for="page-size">Page Size:</label>
@@ -329,20 +358,14 @@
         <p>&copy; <span id="current-year"></span> Image to PDF Converter</p>
     </footer>
 
-    <!-- jsPDF Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
-        // Initialize jsPDF
         window.jsPDF = window.jspdf.jsPDF;
         
         document.addEventListener('DOMContentLoaded', function() {
-            // Set current year in footer
             document.getElementById('current-year').textContent = new Date().getFullYear();
-            
-            // Initialize AdSense
             (adsbygoogle = window.adsbygoogle || []).push({});
             
-            // DOM elements
             const imageInput = document.getElementById('image-input');
             const browseBtn = document.getElementById('browse-btn');
             const dropZone = document.getElementById('drop-zone');
@@ -357,39 +380,48 @@
             const spinner = document.getElementById('spinner');
             const imagePreviews = document.getElementById('image-previews');
             
-            // Track object URLs for cleanup
             const objectUrls = [];
             let files = [];
             
             // Browse button click handler
-            browseBtn.addEventListener('click', function() {
+            browseBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                imageInput.value = ''; // Reset to allow selecting same files again
                 imageInput.click();
             });
             
             // File input change handler
             imageInput.addEventListener('change', function() {
-                if (this.files.length > 0) {
+                if (this.files && this.files.length > 0) {
                     handleFiles(this.files);
                 }
             });
             
             // Drag and drop handlers
-            dropZone.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                this.classList.add('highlight');
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, highlight, false);
             });
             
-            ['dragleave', 'dragend'].forEach(type => {
-                dropZone.addEventListener(type, function() {
-                    this.classList.remove('highlight');
-                });
+            ['dragleave', 'dragend', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, unhighlight, false);
             });
+            
+            function highlight(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.add('highlight');
+            }
+            
+            function unhighlight(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.remove('highlight');
+            }
             
             dropZone.addEventListener('drop', function(e) {
                 e.preventDefault();
-                this.classList.remove('highlight');
-                
-                if (e.dataTransfer.files.length > 0) {
+                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
                     handleFiles(e.dataTransfer.files);
                 }
             });
@@ -398,10 +430,9 @@
             function handleFiles(newFiles) {
                 errorMessage.style.display = 'none';
                 
-                // Filter only image files
+                const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
                 const imageFiles = Array.from(newFiles).filter(file => 
-                    file.type.startsWith('image/') && 
-                    ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.type)
+                    file.type.startsWith('image/') && validTypes.includes(file.type)
                 );
                 
                 if (imageFiles.length === 0) {
@@ -409,8 +440,8 @@
                     return;
                 }
                 
-                // Check file sizes (max 5MB each)
-                const oversizedFiles = imageFiles.filter(file => file.size > 5 * 1024 * 1024);
+                const maxSize = 5 * 1024 * 1024; // 5MB
+                const oversizedFiles = imageFiles.filter(file => file.size > maxSize);
                 if (oversizedFiles.length > 0) {
                     showError(`Some files are too large (max 5MB each): ${oversizedFiles.map(f => f.name).join(', ')}`);
                     return;
@@ -421,12 +452,10 @@
                 showImagePreviews();
                 convertBtn.disabled = false;
                 
-                // Hide previous results
                 outputSection.style.display = 'none';
                 pdfPreview.style.display = 'none';
             }
             
-            // Update file count display
             function updateFileInfo() {
                 if (files.length > 0) {
                     const totalSize = files.reduce((sum, file) => sum + file.size, 0);
@@ -437,7 +466,6 @@
                 }
             }
             
-            // Show image previews
             function showImagePreviews() {
                 imagePreviews.innerHTML = '';
                 
@@ -448,36 +476,21 @@
                     const img = document.createElement('img');
                     img.src = imgUrl;
                     img.className = 'image-preview';
-                    img.title = file.name;
-                    img.alt = `Preview ${index + 1}`;
+                    img.alt = `Preview of ${file.name}`;
                     
                     const container = document.createElement('div');
                     container.style.position = 'relative';
                     container.style.display = 'inline-block';
                     
                     const removeBtn = document.createElement('button');
-                    removeBtn.textContent = '×';
-                    removeBtn.style.position = 'absolute';
-                    removeBtn.style.top = '-5px';
-                    removeBtn.style.right = '-5px';
-                    removeBtn.style.background = '#ff6b6b';
-                    removeBtn.style.color = 'white';
-                    removeBtn.style.border = 'none';
-                    removeBtn.style.borderRadius = '50%';
-                    removeBtn.style.width = '20px';
-                    removeBtn.style.height = '20px';
-                    removeBtn.style.cursor = 'pointer';
-                    removeBtn.style.padding = '0';
-                    removeBtn.style.fontSize = '12px';
-                    removeBtn.style.lineHeight = '1';
+                    removeBtn.className = 'remove-btn';
+                    removeBtn.innerHTML = '&times;';
                     removeBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
                         files.splice(index, 1);
                         updateFileInfo();
                         showImagePreviews();
-                        if (files.length === 0) {
-                            convertBtn.disabled = true;
-                        }
+                        convertBtn.disabled = files.length === 0;
                     });
                     
                     container.appendChild(img);
@@ -486,14 +499,12 @@
                 });
             }
             
-            // Convert button handler
             convertBtn.addEventListener('click', async function() {
                 if (files.length === 0) {
                     showError('Please select at least one image');
                     return;
                 }
                 
-                // Reset UI
                 outputSection.style.display = 'none';
                 pdfPreview.style.display = 'none';
                 progressContainer.style.display = 'block';
@@ -503,7 +514,6 @@
                 errorMessage.style.display = 'none';
                 
                 try {
-                    // Create PDF with selected options
                     const pdf = new jsPDF({
                         orientation: document.getElementById('orientation').value,
                         unit: 'mm',
@@ -512,23 +522,16 @@
                     
                     const quality = parseFloat(document.getElementById('quality').value);
                     
-                    // Process images
                     for (let i = 0; i < files.length; i++) {
                         const file = files[i];
-                        
-                        // Load image
                         const imgUrl = URL.createObjectURL(file);
                         objectUrls.push(imgUrl);
                         
                         await loadImage(imgUrl).then(img => {
-                            // Add page for subsequent images
                             if (i > 0) pdf.addPage();
                             
-                            // Get PDF dimensions (with 10mm margins)
                             const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
                             const pdfHeight = pdf.internal.pageSize.getHeight() - 20;
-                            
-                            // Calculate dimensions to maintain aspect ratio
                             const imgRatio = img.width / img.height;
                             let width = pdfWidth;
                             let height = pdfWidth / imgRatio;
@@ -538,24 +541,18 @@
                                 width = pdfHeight * imgRatio;
                             }
                             
-                            // Center the image on the page
                             const x = (pdf.internal.pageSize.getWidth() - width) / 2;
                             const y = (pdf.internal.pageSize.getHeight() - height) / 2;
                             
-                            // Add image to PDF
                             pdf.addImage(img, 'JPEG', x, y, width, height, undefined, 'FAST');
-                            
-                            // Update progress
                             progressBar.style.width = `${((i + 1) / files.length) * 100}%`;
                         });
                     }
                     
-                    // Generate PDF blob
                     const pdfBlob = pdf.output('blob');
                     const pdfUrl = URL.createObjectURL(pdfBlob);
                     objectUrls.push(pdfUrl);
                     
-                    // Display results
                     downloadLink.href = pdfUrl;
                     downloadLink.download = `images_${new Date().toISOString().slice(0, 10)}.pdf`;
                     pdfPreview.src = pdfUrl;
@@ -569,14 +566,11 @@
                 } finally {
                     progressContainer.style.display = 'none';
                     spinner.style.display = 'none';
-                    convertBtn.disabled = files.length > 0;
-                    
-                    // Clean up object URLs (after a delay to allow PDF to load)
+                    convertBtn.disabled = files.length === 0;
                     setTimeout(cleanupObjectUrls, 10000);
                 }
             });
             
-            // Helper function to load image with error handling
             function loadImage(src) {
                 return new Promise((resolve, reject) => {
                     const img = new Image();
@@ -586,13 +580,11 @@
                 });
             }
             
-            // Show error message
             function showError(message) {
                 errorMessage.textContent = message;
                 errorMessage.style.display = 'block';
             }
             
-            // Clean up object URLs to prevent memory leaks
             function cleanupObjectUrls() {
                 objectUrls.forEach(url => URL.revokeObjectURL(url));
                 objectUrls.length = 0;
