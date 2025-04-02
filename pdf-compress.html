@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +7,7 @@
     <meta name="description" content="Compress PDF files online - reduce file size while maintaining quality. Free PDF compressor tool for desktop and mobile.">
     <title>PDF Compressor | Reduce PDF File Size Online</title>
     <style>
+        /* Styling for the layout */
         :root {
             --primary: #4285f4;
             --primary-dark: #3367d6;
@@ -18,55 +20,51 @@
             --card-bg: #ffffff;
             --border: #dadce0;
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
-        
+
         body {
             font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.5;
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        
+
         .container {
-            max-width: 100%;
             width: 100%;
+            max-width: 800px;
             margin: 0 auto;
-            padding: 16px;
+            padding: 20px;
+            background: var(--card-bg);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
         }
-        
+
         header {
             text-align: center;
             padding: 24px 0;
         }
-        
+
         h1 {
-            font-size: 1.8rem;
+            font-size: 2rem;
             font-weight: 500;
             margin-bottom: 8px;
-            color: var(--text);
         }
-        
+
         p.subtitle {
             color: var(--text-light);
             font-size: 1rem;
         }
-        
-        .card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 24px;
-            border: 1px solid var(--border);
-        }
-        
+
         .upload-area {
             border: 2px dashed var(--border);
             border-radius: 8px;
@@ -76,12 +74,12 @@
             transition: all 0.2s;
             position: relative;
         }
-        
+
         .upload-area.active {
             border-color: var(--primary);
             background-color: rgba(66, 133, 244, 0.05);
         }
-        
+
         .upload-area input {
             position: absolute;
             width: 100%;
@@ -91,26 +89,26 @@
             opacity: 0;
             cursor: pointer;
         }
-        
+
         .upload-icon {
             font-size: 48px;
             color: var(--primary);
             margin-bottom: 12px;
         }
-        
+
         .file-info {
             font-size: 0.9rem;
             color: var(--text-light);
             margin: 12px 0;
             word-break: break-all;
         }
-        
+
         .file-list {
             margin: 16px 0;
             max-height: 200px;
             overflow-y: auto;
         }
-        
+
         .file-item {
             display: flex;
             justify-content: space-between;
@@ -118,18 +116,18 @@
             padding: 8px 0;
             border-bottom: 1px solid var(--border);
         }
-        
+
         .file-item:last-child {
             border-bottom: none;
         }
-        
+
         .file-remove {
             color: var(--error);
             cursor: pointer;
             font-weight: bold;
             padding: 0 8px;
         }
-        
+
         select, button {
             width: 100%;
             padding: 14px 16px;
@@ -141,7 +139,7 @@
             color: var(--text);
             -webkit-appearance: none;
         }
-        
+
         button {
             background: var(--primary);
             color: white;
@@ -150,18 +148,18 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        
+
         button:active {
             background: var(--primary-dark);
             transform: scale(0.98);
         }
-        
+
         button:disabled {
             background: #cccccc;
             cursor: not-allowed;
             transform: none;
         }
-        
+
         .progress-container {
             width: 100%;
             height: 6px;
@@ -171,35 +169,35 @@
             overflow: hidden;
             display: none;
         }
-        
+
         .progress-bar {
             height: 100%;
             width: 0%;
             background: var(--primary);
             transition: width 0.3s;
         }
-        
+
         .result {
             display: none;
             animation: fadeIn 0.3s;
         }
-        
+
         .size-comparison {
             display: flex;
             justify-content: space-between;
             font-size: 0.9rem;
             margin: 16px 0;
         }
-        
+
         .original-size {
             color: var(--text-light);
         }
-        
+
         .compressed-size {
             color: var(--success);
             font-weight: 500;
         }
-        
+
         .download-btn {
             display: inline-block;
             width: 100%;
@@ -212,49 +210,42 @@
             font-weight: 500;
             margin-top: 12px;
         }
-        
+
         .loading {
             display: none;
             text-align: center;
             color: var(--primary);
             margin: 16px 0;
         }
-        
+
         .error {
             color: var(--error);
             margin: 8px 0;
             display: none;
         }
-        
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
+
         /* Responsive adjustments */
         @media (max-width: 480px) {
             .container {
                 padding: 12px;
             }
-            
+
             h1 {
                 font-size: 1.5rem;
             }
-            
+
             .card {
                 padding: 16px;
             }
-            
+
             .upload-area {
                 padding: 32px 12px;
             }
-        }
-        
-        /* Ad container */
-        .ad-container {
-            width: 100%;
-            margin: 20px 0;
-            text-align: center;
         }
     </style>
 </head>
@@ -264,7 +255,7 @@
             <h1>PDF Compressor</h1>
             <p class="subtitle">Reduce PDF file size while maintaining quality</p>
         </header>
-        
+
         <div class="card">
             <div class="upload-area" id="uploadArea">
                 <div class="upload-icon">📄</div>
@@ -272,40 +263,35 @@
                 <p class="file-info">Supports multiple files (Max 25MB each)</p>
                 <input type="file" id="fileInput" accept=".pdf" multiple>
             </div>
-            
+
             <div id="fileList" class="file-list"></div>
-            
+
             <label for="quality">Compression Level:</label>
             <select id="quality">
                 <option value="0.9">High Quality (99%)</option>
                 <option value="0.5">Medium Quality (50%)</option>
                 <option value="0.25">Maximum Compression (25%)</option>
             </select>
-            
+
             <button id="compressBtn" disabled>Compress PDFs</button>
-            
+
             <div class="progress-container" id="progressContainer">
                 <div class="progress-bar" id="progressBar"></div>
             </div>
-            
+
             <div class="loading" id="loadingText">Processing... Please wait</div>
             <div class="error" id="errorText"></div>
         </div>
-        
+
         <div class="card result" id="resultSection">
             <h2>Compression Results</h2>
-            
+
             <div class="size-comparison">
                 <span class="original-size" id="originalSize"></span>
                 <span class="compressed-size" id="compressedSize"></span>
             </div>
-            
+
             <a href="#" id="downloadBtn" class="download-btn">Download Compressed PDF</a>
-            
-            <div class="ad-container">
-                <!-- AdSense will be loaded here -->
-                <div id="ad-placeholder"></div>
-            </div>
         </div>
     </div>
 
@@ -324,233 +310,108 @@
             const compressedSize = document.getElementById('compressedSize');
             const loadingText = document.getElementById('loadingText');
             const errorText = document.getElementById('errorText');
-            
-            let selectedFiles = [];
-            let totalOriginalSize = 0;
-            let compressedFiles = [];
-            
-            // Initialize AdSense (would be replaced with your actual AdSense code)
-            function initAdSense() {
-                const adPlaceholder = document.getElementById('ad-placeholder');
-                // In production, replace this with actual AdSense code
-                adPlaceholder.innerHTML = '<div style="background:#eee;padding:20px;border-radius:8px;">Ad Space</div>';
-                console.log('AdSense would load here in production');
-            }
-            
-            // Handle file selection
-            fileInput.addEventListener('change', function(e) {
-                if (e.target.files.length > 0) {
-                    handleFiles(e.target.files);
-                }
-            });
-            
-            // Drag and drop support
+
+            let selected
+
+Files = [];
+
+            fileInput.addEventListener('change', handleFileSelect);
+            compressBtn.addEventListener('click', compressPDFs);
+
             uploadArea.addEventListener('dragover', function(e) {
                 e.preventDefault();
                 uploadArea.classList.add('active');
             });
-            
+
             uploadArea.addEventListener('dragleave', function() {
                 uploadArea.classList.remove('active');
             });
-            
+
             uploadArea.addEventListener('drop', function(e) {
                 e.preventDefault();
                 uploadArea.classList.remove('active');
-                
-                if (e.dataTransfer.files.length > 0) {
-                    handleFiles(e.dataTransfer.files);
-                }
+                handleFileSelect(e);
             });
-            
-            // Process selected files
-            function handleFiles(files) {
-                errorText.style.display = 'none';
-                totalOriginalSize = 0;
-                selectedFiles = [];
-                compressedFiles = [];
-                
-                // Filter and validate files
-                for (let i = 0; i < files.length; i++) {
-                    const file = files[i];
-                    
-                    // Check file type
-                    if (file.type !== 'application/pdf') {
-                        showError('Only PDF files are supported');
-                        continue;
-                    }
-                    
-                    // Check file size (max 25MB)
-                    if (file.size > 25 * 1024 * 1024) {
-                        showError(`File "${file.name}" is too large (max 25MB)`);
-                        continue;
-                    }
-                    
-                    selectedFiles.push(file);
-                    totalOriginalSize += file.size;
-                }
-                
-                // Update UI
+
+            function handleFileSelect(e) {
+                const files = e.target.files || e.dataTransfer.files;
+                if (files.length === 0) return;
+
+                selectedFiles = Array.from(files);
                 updateFileList();
-                compressBtn.disabled = selectedFiles.length === 0;
-                resultSection.style.display = 'none';
-                
-                if (selectedFiles.length > 0) {
-                    originalSize.textContent = `Original: ${formatFileSize(totalOriginalSize)}`;
-                    compressedSize.textContent = '';
-                }
+                compressBtn.disabled = false;
             }
-            
-            // Update the file list display
+
             function updateFileList() {
                 fileList.innerHTML = '';
-                
-                if (selectedFiles.length === 0) {
-                    fileList.style.display = 'none';
-                    return;
-                }
-                
-                fileList.style.display = 'block';
-                
                 selectedFiles.forEach((file, index) => {
                     const fileItem = document.createElement('div');
-                    fileItem.className = 'file-item';
-                    fileItem.innerHTML = `
-                        <span>${file.name} (${formatFileSize(file.size)})</span>
-                        <span class="file-remove" data-index="${index}">×</span>
-                    `;
+                    fileItem.classList.add('file-item');
+
+                    const fileName = document.createElement('span');
+                    fileName.textContent = file.name;
+                    fileItem.appendChild(fileName);
+
+                    const removeBtn = document.createElement('span');
+                    removeBtn.textContent = '❌';
+                    removeBtn.classList.add('file-remove');
+                    removeBtn.addEventListener('click', () => removeFile(index));
+                    fileItem.appendChild(removeBtn);
+
                     fileList.appendChild(fileItem);
                 });
-                
-                // Add event listeners to remove buttons
-                document.querySelectorAll('.file-remove').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const index = parseInt(this.getAttribute('data-index'));
-                        selectedFiles.splice(index, 1);
-                        updateFileList();
-                        compressBtn.disabled = selectedFiles.length === 0;
-                    });
-                });
             }
-            
-            // Show error message
+
+            function removeFile(index) {
+                selectedFiles.splice(index, 1);
+                updateFileList();
+                compressBtn.disabled = selectedFiles.length === 0;
+            }
+
+            async function compressPDFs() {
+                resultSection.style.display = 'none';
+                errorText.style.display = 'none';
+                loadingText.style.display = 'block';
+                progressContainer.style.display = 'block';
+
+                const quality = parseFloat(qualitySelect.value);
+                const formData = new FormData();
+
+                selectedFiles.forEach(file => formData.append('files[]', file));
+
+                try {
+                    const response = await fetch('your_compression_api_url', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        updateResult(result.originalSize, result.compressedSize, result.downloadUrl);
+                    } else {
+                        showError('Compression failed');
+                    }
+                } catch (error) {
+                    showError('Error while compressing the file');
+                } finally {
+                    loadingText.style.display = 'none';
+                }
+            }
+
+            function updateResult(original, compressed, downloadUrl) {
+                originalSize.textContent = `Original Size: ${original}`;
+                compressedSize.textContent = `Compressed Size: ${compressed}`;
+                downloadBtn.href = downloadUrl;
+                resultSection.style.display = 'block';
+            }
+
             function showError(message) {
                 errorText.textContent = message;
                 errorText.style.display = 'block';
             }
-            
-            // Compress button handler
-            compressBtn.addEventListener('click', async function() {
-                if (selectedFiles.length === 0) return;
-                
-                // Show loading state
-                loadingText.style.display = 'block';
-                progressContainer.style.display = 'block';
-                progressBar.style.width = '0%';
-                compressBtn.disabled = true;
-                resultSection.style.display = 'none';
-                errorText.style.display = 'none';
-                
-                try {
-                    await compressFiles();
-                } catch (error) {
-                    console.error('Compression error:', error);
-                    showError('Compression failed. Please try again.');
-                    loadingText.style.display = 'none';
-                    compressBtn.disabled = false;
-                }
-            });
-            
-            // Compress files using the backend API
-            async function compressFiles() {
-                compressedFiles = [];
-                let totalCompressedSize = 0;
-                
-                for (let i = 0; i < selectedFiles.length; i++) {
-                    const file = selectedFiles[i];
-                    const progress = ((i / selectedFiles.length) * 90);
-                    progressBar.style.width = `${progress}%`;
-                    
-                    try {
-                        const formData = new FormData();
-                        formData.append('pdf', file);
-                        formData.append('quality', qualitySelect.value);
-                        
-                        const response = await fetch('/compress', {
-                            method: 'POST',
-                            body: formData
-                        });
-                        
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        
-                        const compressedBlob = await response.blob();
-                        const compressedFile = {
-                            name: `compressed_${file.name}`,
-                            blob: compressedBlob,
-                            size: compressedBlob.size
-                        };
-                        
-                        compressedFiles.push(compressedFile);
-                        totalCompressedSize += compressedBlob.size;
-                        
-                    } catch (error) {
-                        console.error('Error compressing file:', file.name, error);
-                        throw error;
-                    }
-                }
-                
-                // Update UI with results
-                progressBar.style.width = '100%';
-                loadingText.style.display = 'none';
-                
-                const savings = Math.round((1 - (totalCompressedSize / totalOriginalSize)) * 100);
-                compressedSize.textContent = `Compressed: ${formatFileSize(totalCompressedSize)} (${savings}% smaller)`;
-                
-                // Set up download link
-                if (compressedFiles.length === 1) {
-                    const url = URL.createObjectURL(compressedFiles[0].blob);
-                    downloadBtn.href = url;
-                    downloadBtn.download = compressedFiles[0].name;
-                    downloadBtn.onclick = null; // Reset any previous click handler
-                } else {
-                    // For multiple files, we need to create a zip (this is just a placeholder)
-                    downloadBtn.href = '#';
-                    downloadBtn.onclick = function(e) {
-                        e.preventDefault();
-                        alert('Multiple file download would be implemented with a ZIP archive in production');
-                    };
-                }
-                
-                resultSection.style.display = 'block';
-                resultSection.scrollIntoView({ behavior: 'smooth' });
-                compressBtn.disabled = false;
-            }
-            
-            // Format file size
-            function formatFileSize(bytes) {
-                if (bytes < 1024) return bytes + ' bytes';
-                if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-                return (bytes / 1048576).toFixed(1) + ' MB';
-            }
-            
-            // Initialize the app
-            initAdSense();
         });
-    </script>
-
-                                }
-                            });
-                            
-                            resolve(response);
-                            }, 2000); // Simulate processing delay
-                        });
-                    }
-                    return originalFetch(url, options);
-                };
-            }
-        }
     </script>
 </body>
 </html>
+
+
