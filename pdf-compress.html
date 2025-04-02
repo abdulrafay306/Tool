@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Compressor</title>
+    <title>PDF Compress Tool</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 </head>
@@ -50,33 +50,41 @@
                 return;
             }
 
+            // Read file as ArrayBuffer
             const arrayBuffer = await file.arrayBuffer();
-            const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
 
-            // Compress PDF by removing unnecessary elements
-            // (e.g., images and metadata)
-            pdfDoc.setTitle('Compressed PDF');
-            pdfDoc.setSubject('Compressed File');
-            pdfDoc.setCreator('PDF Compressor Tool');
-            pdfDoc.setAuthor('Your Name');
+            try {
+                // Load PDF document
+                const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
 
-            // Remove all images and fonts (optional for further size reduction)
-            const pages = pdfDoc.getPages();
-            pages.forEach(page => {
-                page.cleanup();
-            });
+                // Set document title and metadata
+                pdfDoc.setTitle('Compressed PDF');
+                pdfDoc.setSubject('Compressed File');
+                pdfDoc.setCreator('PDF Compressor Tool');
+                pdfDoc.setAuthor('Your Name');
 
-            // Create the compressed PDF
-            const compressedPdfBytes = await pdfDoc.save();
+                // Optimize PDF (remove metadata, objects, etc.)
+                const pages = pdfDoc.getPages();
+                pages.forEach(page => {
+                    page.cleanup();
+                });
 
-            // Update progress
-            progressBar.value = 100;
+                // Generate compressed PDF
+                const compressedPdfBytes = await pdfDoc.save();
 
-            // Create a Blob and generate a download link
-            const compressedBlob = new Blob([compressedPdfBytes], { type: 'application/pdf' });
-            const compressedUrl = URL.createObjectURL(compressedBlob);
-            downloadLink.href = compressedUrl;
-            downloadLink.style.display = 'inline-block';
+                // Update progress bar
+                progressBar.value = 100;
+
+                // Create a Blob from the compressed PDF data
+                const compressedBlob = new Blob([compressedPdfBytes], { type: 'application/pdf' });
+                const compressedUrl = URL.createObjectURL(compressedBlob);
+
+                // Update download link and display it
+                downloadLink.href = compressedUrl;
+                downloadLink.style.display = 'inline-block';
+            } catch (error) {
+                alert('Error compressing PDF: ' + error.message);
+            }
         });
     </script>
 
@@ -174,6 +182,7 @@
 </body>
 
 </html>
+
 
 
 
