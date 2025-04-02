@@ -540,38 +540,6 @@
         });
     </script>
 
-    <!-- Backend API Simulation (for demo purposes) -->
-    <script>
-        // This is just for demonstration - in production you would have a real backend
-        if (window.location.href.includes('localhost')) {
-            console.log('Running in development mode with mock API');
-            
-            // Mock the /compress endpoint for local testing
-            if (typeof window.mockAPI === 'undefined') {
-                window.mockAPI = true;
-                
-                // Mock the fetch API for the /compress endpoint
-                const originalFetch = window.fetch;
-                window.fetch = async function(url, options) {
-                    if (url === '/compress' && options.method === 'POST') {
-                        return new Promise((resolve) => {
-                            setTimeout(() => {
-                                const file = options.body.get('pdf');
-                            const quality = options.body.get('quality') || 0.7;
-                            
-                            // Simulate compression by reducing file size
-                            const reduction = 1 - (0.5 * (1 - parseFloat(quality)));
-                            const compressedSize = Math.round(file.size * reduction);
-                            
-                            // Create a mock blob with the "compressed" file
-                            const blob = new Blob([file], { type: 'application/pdf' });
-                            
-                            const response = new Response(blob, {
-                                status: 200,
-                                statusText: 'OK',
-                                headers: {
-                                    'Content-Type': 'application/pdf',
-                                    'Content-Disposition': `attachment; filename=compressed_${file.name}`
                                 }
                             });
                             
